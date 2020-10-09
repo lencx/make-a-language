@@ -19,7 +19,7 @@ pub(crate) fn extract_digits(s: &str) -> (&str, &str) {
 #[allow(dead_code)]
 pub(crate) fn extract_op(s: &str) -> (&str, &str) {
   match &s[0..1] {
-    "+" | "-" | "*" | "/" => {},
+    "+" | "-" | "*" | "/" | "^" => {},
     _ => panic!("Invalid operator"),
   }
 
@@ -58,6 +58,8 @@ mod tests {
   #[test]
   fn extract_operator() {
     assert_eq!(extract_op("+2"), ("2", "+"));
+    assert_eq!(extract_op("-2"), ("2", "-"));
     assert_eq!(extract_op("*2"), ("2", "*"));
+    assert_eq!(extract_op("/2"), ("2", "/"));
   }
 }
