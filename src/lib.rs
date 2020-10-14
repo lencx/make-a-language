@@ -71,11 +71,6 @@ mod tests {
   }
 
   #[test]
-  fn parse_number_and_op() {
-    assert_eq!(Number::new("123"), ("", Number(123)));
-  }
-
-  #[test]
   fn parse_one_plus_two() {
     assert_eq!(
       Expr::new("1+2"),

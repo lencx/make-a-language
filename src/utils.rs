@@ -26,6 +26,19 @@ pub(crate) fn extract_op(s: &str) -> (&str, &str) {
   (&s[1..], &s[0..1])
 }
 
+#[allow(dead_code)]
+pub(crate) fn extract_space(s: &str) -> (&str, &str) {
+  let space_end = s.char_indices()
+    .find_map(|(idx, c)| {
+      if c == ' ' { None }
+      else { Some(idx) }
+    }).unwrap_or_else(|| s.len());
+
+  let space = &s[..space_end];
+  let remainder = &s[space_end..];
+  (remainder, space)
+}
+
 #[cfg(test)]
 mod tests {
   use super::*;
@@ -61,5 +74,10 @@ mod tests {
     assert_eq!(extract_op("-2"), ("2", "-"));
     assert_eq!(extract_op("*2"), ("2", "*"));
     assert_eq!(extract_op("/2"), ("2", "/"));
+  }
+
+  #[test]
+  fn extract_spaces() {
+    assert_eq!(extract_space("   1"), ("1", "   "))
   }
 }
