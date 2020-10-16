@@ -4,16 +4,20 @@
 pub(crate) fn extract_digits(s: &str) -> (&str, &str) {
   // (&s[1..], &s[0..1])
   // TODO: float
-  let digits_end = s.char_indices()
-    .find_map(|(idx, c)| {
-      let temp = (c == '_' || c == '.') && s.is_char_boundary(idx+1);
-      if c.is_ascii_digit() || temp { None }
-      else { Some(idx) }
-    }).unwrap_or_else(|| s.len());
+  // let digits_end = s.char_indices()
+  //   .find_map(|(idx, c)| {
+  //     let temp = (c == '_' || c == '.') && s.is_char_boundary(idx+1);
+  //     if c.is_ascii_digit() || temp { None }
+  //     else { Some(idx) }
+  //   }).unwrap_or_else(|| s.len());
 
-  let digits = &s[..digits_end];
-  let remainder = &s[digits_end..];
-  (remainder, digits)
+  // let digits = &s[..digits_end];
+  // let remainder = &s[digits_end..];
+  // (remainder, digits)
+    take_while(|c, idx| {
+      let temp = (c == '_' || c == '.') && s.is_char_boundary(idx+1);
+      c.is_ascii_digit() || temp
+    }, s)
 }
 
 #[allow(dead_code)]
@@ -28,15 +32,26 @@ pub(crate) fn extract_op(s: &str) -> (&str, &str) {
 
 #[allow(dead_code)]
 pub(crate) fn extract_space(s: &str) -> (&str, &str) {
-  let space_end = s.char_indices()
-    .find_map(|(idx, c)| {
-      if c == ' ' { None }
-      else { Some(idx) }
-    }).unwrap_or_else(|| s.len());
+  // let space_end = s.char_indices()
+  //   .find_map(|(idx, c)| {
+  //     if c == ' ' { None }
+  //     else { Some(idx) }
+  //   }).unwrap_or_else(|| s.len());
 
-  let space = &s[..space_end];
-  let remainder = &s[space_end..];
-  (remainder, space)
+  // let space = &s[..space_end];
+  // let remainder = &s[space_end..];
+  // (remainder, space)
+  take_while(|c, _| c == ' ', s)
+}
+
+pub fn take_while(accept: impl Fn(char, usize) -> bool, s: &str) -> (&str, &str) {
+  let extracted_end = s.char_indices()
+    .find_map(|(idx, c)| if accept(c, idx) { None } else { Some(idx) })
+    .unwrap_or_else(|| s.len());
+
+  let extracted = &s[..extracted_end];
+  let remainder = &s[extracted_end..];
+  (remainder, extracted)
 }
 
 #[cfg(test)]
