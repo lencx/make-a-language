@@ -44,6 +44,19 @@ pub(crate) fn extract_space(s: &str) -> (&str, &str) {
   take_while(|c, _| c == ' ', s)
 }
 
+pub(crate) fn extract_ident(s: &str) -> (&str, &str) {
+  let starts_with_alphabetic = s.chars()
+    .next()
+    .map(|c| c.is_ascii_alphabetic())
+    .unwrap_or(false);
+
+  if starts_with_alphabetic {
+    take_while(|c, _| c.is_ascii_alphanumeric(), s)
+  } else {
+    (s, "")
+  }
+}
+
 pub fn take_while(accept: impl Fn(char, usize) -> bool, s: &str) -> (&str, &str) {
   let extracted_end = s.char_indices()
     .find_map(|(idx, c)| if accept(c, idx) { None } else { Some(idx) })
@@ -93,6 +106,17 @@ mod tests {
 
   #[test]
   fn extract_spaces() {
-    assert_eq!(extract_space("   1"), ("1", "   "))
+    assert_eq!(extract_space("   1"), ("1", "   "));
+  }
+
+  #[test]
+  fn extract_alphabetic_ident() {
+    assert_eq!(extract_ident("testAbc skas"), (" skas", "testAbc"));
+  }
+
+  #[test]
+  fn extract_alphanumeric_ident() {
+    assert_eq!(extract_ident("test123 skas"), (" skas", "test123"));
+    assert_eq!(extract_ident("123test skas"), ("123test skas", ""));
   }
 }
